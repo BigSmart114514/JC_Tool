@@ -3,7 +3,10 @@ from PIL import Image, ImageGrab
 import io
 import pyautogui
 import datetime
-
+def getip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]
 
 current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -15,7 +18,7 @@ file_name = f"log {current_time}.txt"
 
 def serve():
 
-    addr='172.16.11.13'
+    addr=getip()
     port=10000
     '''with open(file_name, 'a') as file:
         file.write(f"[{datetime.datetime.now().strftime("%H : %M : %S")} INFO] socket server running on {addr}:{port}\n")'''
