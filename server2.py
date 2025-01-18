@@ -1,28 +1,39 @@
-import socket,time
-from PIL import Image, ImageGrab
-import io
-import pyautogui
-import datetime
+#import time
+from time import sleep
+from socket import socket,SOCK_DGRAM,AF_INET,SOCK_STREAM
+from PIL import ImageGrab
+#import io
+from io import BytesIO
+from pyautogui import moveTo,click,rightClick
+#import pyautogui
+#import datetime
+from datetime import datetime
+current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+file_name = f"log {current_time}.txt"
+DEBUG=True
+INFO="INFO"
+WARNING="WARNING"
+ERROR="ERROR"
+def log(status,message):
+    if DEBUG:
+        with open(file_name, 'a') as file:
+            file.write("[{} {}] {}\n".format(datetime.now().strftime("%H:%M:%S"),status,message))
 def getip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s = socket(AF_INET, SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     return s.getsockname()[0]
 
-current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-file_name = f"log {current_time}.txt"
 
-'''with open(file_name, 'a') as file:
-    file.write(f"[{datetime.datetime.now().strftime("%H : %M : %S")} INFO] file running\n")'''
 
+log (INFO,"file running")
 
 def serve():
 
     addr=getip()
     port=10000
-    '''with open(file_name, 'a') as file:
-        file.write(f"[{datetime.datetime.now().strftime("%H : %M : %S")} INFO] socket server running on {addr}:{port}\n")'''
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    log (INFO,f"socket server running on {addr}:{port}")
+    sock = socket(AF_INET, SOCK_STREAM)
     server_address = (addr, port)
     sock.bind(server_address)
 
@@ -30,21 +41,18 @@ def serve():
     sock.listen(1)
 
     try:
-        '''with open(file_name, 'a') as file:
-            file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} INFO] waiting for connection\n")'''
+        log(INFO,"waiting for connection")
         connection, client_address = sock.accept()
-        '''with open(file_name, 'a') as file:
-            file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} INFO] connection from {client_address}\n")'''
+        log(INFO,f"connection from {client_address}")
         recfps=connection.recv(4)
         fps=int.from_bytes(recfps,byteorder='big', signed=True)
-        '''with open(file_name, 'a') as file:
-            file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} INFO] fps set to {fps}\n")'''
+        log(INFO,f"fps set to {fps}")
         try:
             while True:
                 
                 screenshot = ImageGrab.grab()
             
-                img_byte_arr = io.BytesIO()
+                img_byte_arr = BytesIO()
                 screenshot.save(img_byte_arr, format='PNG')
                 img_byte_arr = img_byte_arr.getvalue()
                 connection.sendall(b"1")
@@ -57,29 +65,23 @@ def serve():
                     recmousey=connection.recv(4)
                     mousex=int.from_bytes(recmousex, byteorder='big', signed=True)
                     mousey=int.from_bytes(recmousey, byteorder='big', signed=True)
-                    pyautogui.moveTo(mousex, mousey)
-                    pyautogui.click()
-                    '''with open(file_name, 'a') as file:
-                        file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} INFO] left clicking at {mousex},{mousey}\n")
-'''
+                    moveTo(mousex, mousey)
+                    click()
+                    log(INFO,f"left clicking at {mousex},{mousey}")
                 elif (mouseupdate==b'2'):
 
                     recmousex=connection.recv(4)
                     recmousey=connection.recv(4)
                     mousex=int.from_bytes(recmousex, byteorder='big', signed=True)
                     mousey=int.from_bytes(recmousey, byteorder='big', signed=True)
-                    pyautogui.moveTo(mousex, mousey)
-                    pyautogui.rightClick()
-                    '''with open(file_name, 'a') as file:
-                        file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} INFO] right clicking at {mousex},{mousey}\n")'''
- 
+                    moveTo(mousex, mousey)
+                    rightClick()
+                    log(INFO,f"right clicking at {mousex},{mousey}")
                 elif(mouseupdate==b'0'):
                     pass
                 else :
-                    '''with open(file_name, 'a') as file:
-                        file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} Warning] unsupported mouse operation from client :{mouseupdate}\n")'''
-
-                time.sleep(int(fps*1.0/1000))
+                    log(WARNING,f"unsupported mouse operation from client :{mouseupdate}")
+                sleep(int(fps*1.0/1000))
 
                 '''# 接收数据
                 data = connection.recv(1024)
@@ -90,23 +92,17 @@ def serve():
                 connection.sendall(response.encode())
         '''
         except Exception as e:
-            '''with open(file_name, 'a') as file:
-                file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} WARNING] {repr(e)}\n")'''
+            log(WARNING,repr(e))
         finally:
-            '''with open(file_name, 'a') as file:
-                file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} INFO] closing connection {client_address}\n")
-            connection.close()'''
+            connection.close()
+            log(INFO,f"closing connection {client_address}")
     except Exception as e:
-        '''with open(file_name, 'a') as file:
-            file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} WARNING] {repr(e)}\n")'''
+        log(WARNING,repr(e))
     finally:
-        '''with open(file_name, 'a') as file:
-            file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} INFO] closing socket\n")'''
+        log(INFO,"closing socket")
         sock.close()
 while True:
     try:
         serve()
     except Exception as e:
-        '''with open(file_name, 'a') as file:
-            file.write(f"[{datetime.datetime.now().strftime("%H:%M:%S")} WARNING] {repr(e)}\n")
-'''
+        log(WARNING,repr(e))
