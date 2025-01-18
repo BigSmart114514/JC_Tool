@@ -1,4 +1,4 @@
-import socket
+from socket import SOCK_STREAM,AF_INET,socket
 from time import sleep
 from os import system
 def recv_sock(connection):
@@ -16,7 +16,6 @@ def recv_sock(connection):
 ADDR='172.16.11.15'
 PORT=10001
 
-
 system("cls")
 system("title JC client(unconnected)")
 
@@ -29,7 +28,7 @@ path="C:\\Users\\Administrator"
 
 while True:
     command=input(path+">")
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket(AF_INET, SOCK_STREAM)
     server_address = (ADDR,PORT )
     sock.connect(server_address)
     system(f"title JC client({ADDR}:{PORT})")
@@ -42,13 +41,7 @@ while True:
     sock.sendall(len(path.encode("utf-8")).to_bytes(4 , byteorder="big"))
     sock.sendall(path.encode("utf-8"))
 
-
-
-
-
     print(recv_sock(sock))
-
-
 
     print("error:",recv_sock(sock))
     path=recv_sock(sock)
