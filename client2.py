@@ -1,18 +1,20 @@
-import socket
-import tkinter as tk
+#import socket
+from socket import SOCK_STREAM,AF_INET,socket
+#import tkinter as tk
+from tkinter import Scale,Label,Tk,HORIZONTAL
 from PIL import Image, ImageTk
-import io
-
+#import io
+from io import BytesIO
 fps=40
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock = socket(AF_INET, SOCK_STREAM)
 mouseposx=0
 mouseposy=0
 mouseupdate=False
 mouseop="none"
 cwidth=480
 # 连接到服务器
-server_address = ('172.16.11.13', 10000)
+server_address = ('172.16.11.15', 10000)
 sock.connect(server_address)
 
 sock.sendall(fps.to_bytes(4,byteorder='big'))
@@ -35,7 +37,7 @@ def update_image():
             img_byte_arr += packet
         
         # 将字节流转换为图像
-        img = Image.open(io.BytesIO(img_byte_arr))
+        img = Image.open(BytesIO(img_byte_arr))
         global cwidth
         img = img.resize((int(cwidth), int(int(cwidth)*1080/1920.0)))
         photo = ImageTk.PhotoImage(image=img)
@@ -107,15 +109,17 @@ try:
         global cwidth
         cwidth=int(value)
         label2.config(text="屏幕大小： " + value)
+    '''
     def update_fps_label(value):
         global setfps
         setfps=int(1000*1.0/int(value))
         label2.config(text="帧率： " + value)
-    root = tk.Tk()
+        '''
+    root = Tk()
     root.title("屏幕")
 
 
-    label = tk.Label(root)
+    label = Label(root)
     label.pack()
     root.bind("<Button-1>", on_click_left)
     root.bind("<Button-3>", on_click_right)
@@ -124,15 +128,15 @@ try:
 
 
     
-    settings = tk.Tk()
+    settings = Tk()
     settings.title("settings")
 
 
-    label2 = tk.Label(settings, text="屏幕大小： 1")
+    label2 = Label(settings, text="屏幕大小： 1")
     label2.pack()
 
 
-    scale = tk.Scale(settings, from_=1, to=1920, orient=tk.HORIZONTAL, length=300,
+    scale = Scale(settings, from_=1, to=1920, orient=HORIZONTAL, length=300,
                  troughcolor='lightgray', sliderlength=20, sliderrelief='solid',
                  bg='white', highlightthickness=20, command=update_screen_size_label)
     scale.pack()
