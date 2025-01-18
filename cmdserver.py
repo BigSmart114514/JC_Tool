@@ -1,9 +1,5 @@
-import socket
 from time import sleep
-#from PIL import Image, ImageGrab
-#import io
-#import subprocess
-#import datetime,os
+from socket import socket,SOCK_DGRAM,AF_INET,SOCK_STREAM
 from subprocess import Popen,PIPE
 from os import system
 def recv_sock(connection):
@@ -26,7 +22,7 @@ def Get_current_path():
     output,error = process.communicate()
     return output.decode("GBK")
 def getip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s = socket(AF_INET, SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     return s.getsockname()[0]
 
@@ -83,7 +79,7 @@ def serve():
     global path
     
     
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket(AF_INET, SOCK_STREAM)
     server_address = (addr, port)
     sock.bind(server_address)
 
@@ -93,8 +89,6 @@ def serve():
     try:
         
         connection, client_address = sock.accept()
-        
-
         
         
         command=recv_sock(connection)
@@ -114,15 +108,7 @@ def serve():
         sleep(0.1)
         connection.sendall(len(path.encode("utf-8")).to_bytes(4, byteorder='big'))
         connection.sendall(path.encode("utf-8"))
-        
-        
-        
-
-                
-        
-        
-
-       
+            
     finally:
         
         sock.close()
