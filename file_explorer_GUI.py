@@ -5,18 +5,21 @@ import PIL.Image
 import os
 
 def list_files(directory):
-      
-    files=[]
-    for file in os.listdir(directory):
-        full_path = os.path.join(directory, file)
-        if os.path.isfile(full_path):
-            #print(f"{file} (文件)")
-            files.append([file,f"{file.split('.')[-1]}文件"])
-        elif os.path.isdir(full_path):
-            #print(f"{file} (文件夹)")
-            files.append([file,"<dir>"])
+    try:
+        files=[]
+        for file in os.listdir(directory):
+            full_path = os.path.join(directory, file)
+            if os.path.isfile(full_path):
+                #print(f"{file} (文件)")
+                files.append([file,f"{file.split('.')[-1]}文件"])
+            elif os.path.isdir(full_path):
+                #print(f"{file} (文件夹)")
+                files.append([file,"<dir>"])
 
-    return files
+        return files
+    except Exception as e:
+        print(e)
+        return [["拒绝访问","!error!"]]
 path="C:\\"
 
 
@@ -116,11 +119,15 @@ go_button.pack()
 def go_back():
     global path
     path=path.split("\\")
-    path.pop()
-    path.pop()
-    print(path)
+    if (len(path)!=2):
+        
+        path.pop()
+        path.pop()
+        print(path)
     path="\\".join(path)+"\\"
     files=list_files(path)
+    print(path)
+    
     for i in tree.get_children():
         tree.delete(i)
     for file in files:

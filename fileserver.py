@@ -21,18 +21,21 @@ def getip():
     s.connect(("8.8.8.8", 80))
     return s.getsockname()[0]
 def list_files(directory):
-      
-    files=[]
-    for file in listdir(directory):
-        full_path = path.join(directory, file)
-        if path.isfile(full_path):
-            #print(f"{file} (文件)")
-            files.append([file,f"{file.split('.')[-1]}文件"])
-        elif path.isdir(full_path):
-            #print(f"{file} (文件夹)")
-            files.append([file,"<dir>"])
+    try:
+        files=[]
+        for file in listdir(directory):
+            full_path = path.join(directory, file)
+            if path.isfile(full_path):
+                #print(f"{file} (文件)")
+                files.append([file,f"{file.split('.')[-1]}文件"])
+            elif path.isdir(full_path):
+                #print(f"{file} (文件夹)")
+                files.append([file,"<dir>"])
 
-    return files
+        return files
+    except Exception as e:
+        print(e)
+        return [["拒绝访问","error"]]
 ADDR=getip()
 PORT=10002
 def serve():

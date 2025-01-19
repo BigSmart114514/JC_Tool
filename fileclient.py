@@ -129,10 +129,14 @@ go_button.pack()
 def go_back():
     global path
     path=path.split("\\")
-    path.pop()
-    path.pop()
-    print(path)
+    if (len(path)!=2):
+        
+        path.pop()
+        path.pop()
+        print(path)
     path="\\".join(path)+"\\"
+    files=get_files(path)
+    print(path)
     files=get_files(path)
     for i in tree.get_children():
         tree.delete(i)
