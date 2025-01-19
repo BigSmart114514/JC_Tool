@@ -46,6 +46,7 @@ def on_double_click(event):
         
     else:
         if tree.set(item, 'text'):
+            #print("start \"{}{}\"".format(path,tree.set(item, 'text')))
             #os.system("start \"{}{}\"".format(path,tree.set(item, 'text')))
             pass
     #\"{tree.set(item, 'text')}\"
@@ -104,14 +105,19 @@ entry = tk.Entry(root)
 entry.pack()
 
 def go_to():
+    global path
     target = entry.get()
+    print(target)
     try:
-        item_id = tree.get_children()[int(target) - 1]
-        tree.see(item_id)
-        tree.selection_set(item_id)
-    except (IndexError, ValueError):
-        print("无效的行号")
-
+        
+        files=list_files(target)
+        for i in tree.get_children():
+            tree.delete(i)
+        for file in files:
+            tree.insert("", "end", values=(file[0],file[1]))
+        path=target.strip("\\")+"\\"
+    except:
+        print("SB")
 go_button = tk.Button(root, text="前往", command=go_to)
 go_button.pack()
 
