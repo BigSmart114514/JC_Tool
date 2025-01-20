@@ -3,20 +3,10 @@ from socket import SOCK_STREAM,AF_INET,socket
 from json import loads
 import tkinter as tk
 from tkinter import ttk
+from pubilc_functions import recv_sock
 ADDR='172.16.11.15'
 PORT=10002
-def recv_sock(connection):
-    data_length = connection.recv(4)
-    if not data_length:
-        return
-        # 接收数据
-    byte_arr = b''
-    while len(byte_arr) < int.from_bytes(data_length, byteorder='big'):
-        packet = connection.recv(4096)
-        if not packet:
-            break
-        byte_arr += packet
-    return byte_arr.decode("utf-8")
+
 def get_files(path):
     sock = socket(AF_INET, SOCK_STREAM)
     server_address = (ADDR,PORT)

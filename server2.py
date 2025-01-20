@@ -8,6 +8,7 @@ from pyautogui import moveTo,click,rightClick
 #import pyautogui
 #import datetime
 from datetime import datetime
+from pubilc_functions import getip
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 file_name = f"log {current_time}.txt"
 DEBUG=True
@@ -18,13 +19,6 @@ def log(status,message):
     if DEBUG:
         with open(file_name, 'a') as file:
             file.write("[{} {}] {}\n".format(datetime.now().strftime("%H:%M:%S"),status,message))
-def getip():
-    s = socket(AF_INET, SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    return s.getsockname()[0]
-
-
-
 
 log (INFO,"file running")
 

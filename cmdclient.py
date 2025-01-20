@@ -1,18 +1,7 @@
 from socket import SOCK_STREAM,AF_INET,socket
 from time import sleep
 from os import system
-def recv_sock(connection):
-    data_length = connection.recv(4)
-    if not data_length:
-        return
-        # 接收数据
-    byte_arr = b''
-    while len(byte_arr) < int.from_bytes(data_length, byteorder='big'):
-        packet = connection.recv(4096)
-        if not packet:
-            break
-        byte_arr += packet
-    return byte_arr.decode("utf-8")
+from pubilc_functions import recv_sock
 ADDR='172.16.11.15'
 PORT=10001
 
